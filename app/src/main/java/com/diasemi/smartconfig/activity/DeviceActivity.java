@@ -13,6 +13,12 @@ package com.diasemi.smartconfig.activity;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothProfile;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -53,6 +59,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import java.util.List;
+import java.util.UUID;
+
 public class DeviceActivity extends AppCompatActivity implements ConfigurationManager.Holder {
     private final static String TAG = "DeviceActivity";
 
@@ -69,6 +78,81 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     private Drawer drawer;
     private Fragment deviceFragment, infoFragment, disclaimerFragment;
     private RuntimePermissionChecker permissionChecker;
+
+
+    private BluetoothGatt mybluetoothGatt;
+    final public String FromTBS = "a304d2495cb8"; // WJZ. cant find the name
+    final public String ToTBS = "a304d2495cba";
+
+
+    public BluetoothGattCharacteristic ch_write;
+    public BluetoothGattCharacteristic ch_read;
+
+
+    public void Write_BLE(byte[] towrite){
+        ch_write.setValue(towrite);
+        ch_write.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mybluetoothGatt.writeCharacteristic(ch_write);
+    }
+
+
+    private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                // successfully connected to the GATT Server
+//                broadcastUpdate(ACTION_GATT_CONNECTED);
+                // Attempts to discover services after successful connection.
+                mybluetoothGatt.discoverServices();
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                // disconnected from the GATT Server
+            }
+        }
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            final byte[] value = characteristic.getValue();
+            if (characteristic == ch_read){
+                Log.e("CHAR234","onCharacteristicChanged TBS2" + characteristic.getUuid());
+//                BLERXQueu.add(value);
+//                TBS2_received((value));
+            }
+        }
+        @Override
+        public void onServicesDiscovered(@NotNull final BluetoothGatt gatt, final int status) {
+            final List<BluetoothGattService> services = gatt.getServices();
+            for ( BluetoothGattService service : services){
+                Log.e("CHAR234 #","service " + service.getUuid().toString());
+                for (BluetoothGattCharacteristic charity : service.getCharacteristics()){
+                    String uid = charity.getUuid().toString();
+                    Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
+                    if (uid.contains(FromTBS)){
+                        Log.e("CHAR234","char read " + uid);
+                        ch_read=charity;
+                        UUID uid2=ch_read.getUuid();
+                        gatt.setCharacteristicNotification(ch_read,true);
+                        int i=0;
+                        for (BluetoothGattDescriptor descriptor:ch_read.getDescriptors()){
+                            // getDescriptor did not work. somehow it has 2. the 2nd blocks writing
+                            if (i == 0) {
+                                Log.e(TAG, "BluetoothGattDescriptor: " + descriptor.getUuid().toString());
+                                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                                boolean writeok = gatt.writeDescriptor(descriptor);
+                                Log.e(TAG, "   write GattDescriptor: " + writeok);
+                            }
+                            i++;
+                        }
+
+                    }
+                    if (uid.contains(ToTBS)){
+                        Log.e("CHAR234","char write " + uid);
+                        ch_write=charity;
+                    }
+                }
+            }
+            byte[] swnp_init = {0,0,0,1,0};
+            Write_BLE(swnp_init);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,12 +197,13 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             Toast.makeText(this, R.string.no_device_set, Toast.LENGTH_LONG).show();
             return;
         }
+        mybluetoothGatt = device.connectGatt(this,true, bluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
 
         EventBus.getDefault().register(this);
         manager = new ConfigurationManager(this, device);
         if (permissionChecker.checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, R.string.storage_permission_rationale, REQUEST_STORAGE_PERMISSION)) {
             ConfigSpec.loadConfigSpec(this);
-            manager.connect();
+            //manager.connect();
         }
 
         drawer = createDrawer();

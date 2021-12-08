@@ -186,49 +186,49 @@ public class DeviceFragment extends Fragment {
     }
 
     private void updateStatus() {
-        int statusText = R.string.status_connecting;
-        switch (manager.getState()) {
-            case ConfigurationManager.DISCONNECTED:
-                statusText = R.string.status_disconnected;
-                progress.setVisibility(View.GONE);
-                settingsSetEnabled(false);
-                refresh.setEnabled(false);
-                break;
-
-            case ConfigurationManager.CONNECTING:
-                statusText = R.string.status_connecting;
-                progress.setVisibility(View.VISIBLE);
-                break;
-
-            case ConfigurationManager.CONNECTED:
-                statusText = R.string.status_connected;
-                break;
-
-            case ConfigurationManager.SERVICE_DISCOVERY:
-                statusText = R.string.status_service_discovery;
-                break;
-
-            case ConfigurationManager.ELEMENT_DISCOVERY:
-                statusText = R.string.status_element_discovery;
-                progress.setVisibility(View.VISIBLE);
-                apply.setEnabled(false);
-                refresh.setEnabled(false);
-                restore.setEnabled(false);
-                break;
-
-            case ConfigurationManager.READY:
-                boolean pending = manager.isReadPending() || manager.isWritePending();
-                if (manager.isReadPending())
-                    statusText = R.string.status_reading;
-                else if (manager.isWritePending())
-                    statusText = R.string.status_applying;
-                else
-                    statusText = R.string.status_ready;
-                progress.setVisibility(pending ? View.VISIBLE : View.GONE);
-                settingsSetEnabled(!pending);
-                refresh.setEnabled(!pending);
-                break;
-        }
+        int statusText = R.string.status_testcard;
+//        switch (manager.getState()) {
+//            case ConfigurationManager.DISCONNECTED:
+//                statusText = R.string.status_disconnected;
+//                progress.setVisibility(View.GONE);
+//                settingsSetEnabled(false);
+//                refresh.setEnabled(false);
+//                break;
+//
+//            case ConfigurationManager.CONNECTING:
+//                statusText = R.string.status_connecting;
+//                progress.setVisibility(View.VISIBLE);
+//                break;
+//
+//            case ConfigurationManager.CONNECTED:
+//                statusText = R.string.status_connected;
+//                break;
+//
+//            case ConfigurationManager.SERVICE_DISCOVERY:
+//                statusText = R.string.status_service_discovery;
+//                break;
+//
+//            case ConfigurationManager.ELEMENT_DISCOVERY:
+////                statusText = R.string.status_element_discovery;
+////                progress.setVisibility(View.VISIBLE);
+////                apply.setEnabled(false);
+////                refresh.setEnabled(false);
+////                restore.setEnabled(false);
+//                break;
+//
+//            case ConfigurationManager.READY:
+//                boolean pending = manager.isReadPending() || manager.isWritePending();
+//                if (manager.isReadPending())
+//                    statusText = R.string.status_reading;
+//                else if (manager.isWritePending())
+//                    statusText = R.string.status_applying;
+//                else
+//                    statusText = R.string.status_ready;
+//                progress.setVisibility(pending ? View.VISIBLE : View.GONE);
+//                settingsSetEnabled(!pending);
+//                refresh.setEnabled(!pending);
+//                break;
+//        }
         status.setText(statusText);
     }
 

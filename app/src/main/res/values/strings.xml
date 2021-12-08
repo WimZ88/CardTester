@@ -10,8 +10,8 @@
 -->
 <resources>
 
-    <string name="app_name">SmartConfig</string>
-    <string name="dialog_semiconductor">Dialog Semiconductor</string>
+    <string name="app_name">TBS2 BLE tester</string>
+    <string name="dialog_semiconductor">Waste Vision</string>
 
     <string name="menu_scan">Scan</string>
     <string name="menu_stop_scan">Stop Scan</string>
@@ -80,6 +80,7 @@
     <string name="version_label">Version:</string>
     <string name="status_label">Status:</string>
     <string name="status_disconnected">Disconnected</string>
+    <string name="status_testcard">Testing SWNP</string>
     <string name="status_connecting">Connecting…</string>
     <string name="status_connected">Connected</string>
     <string name="status_service_discovery">Discovering services…</string>
