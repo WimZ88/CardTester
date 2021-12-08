@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.diasemi.smartconfig.R;
@@ -88,6 +89,17 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     public BluetoothGattCharacteristic ch_write;
     public BluetoothGattCharacteristic ch_read;
 
+    protected View.OnClickListener bt_click = new View.OnClickListener() {
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.b_card:
+                    byte[] swnp_init = {0,0,0,1,0};
+                    Write_BLE(swnp_init);
+                    break;
+            }
+        }
+    };
+
 
     public void Write_BLE(byte[] towrite){
         ch_write.setValue(towrite);
@@ -122,12 +134,12 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             final List<BluetoothGattService> services = gatt.getServices();
             for ( BluetoothGattService service : services){
                 Log.e("CHAR234 #","service " + service.getUuid().toString());
-                for (BluetoothGattCharacteristic charity : service.getCharacteristics()){
-                    String uid = charity.getUuid().toString();
+                for (BluetoothGattCharacteristic ristic : service.getCharacteristics()){
+                    String uid = ristic.getUuid().toString();
                     Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
                     if (uid.contains(FromTBS)){
                         Log.e("CHAR234","char read " + uid);
-                        ch_read=charity;
+                        ch_read=ristic;
                         UUID uid2=ch_read.getUuid();
                         gatt.setCharacteristicNotification(ch_read,true);
                         int i=0;
@@ -145,12 +157,10 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     }
                     if (uid.contains(ToTBS)){
                         Log.e("CHAR234","char write " + uid);
-                        ch_write=charity;
+                        ch_write=ristic;
                     }
                 }
             }
-            byte[] swnp_init = {0,0,0,1,0};
-            Write_BLE(swnp_init);
         }
     };
 
@@ -159,6 +169,9 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_device);
+
+        Button b_open= (Button) findViewById(R.id.b_card);
+        b_open.setOnClickListener(bt_click);
 
         permissionChecker = new RuntimePermissionChecker(this, savedInstanceState);
         permissionChecker.registerPermissionRequestCallback(REQUEST_STORAGE_PERMISSION, new RuntimePermissionChecker.PermissionRequestCallback() {
