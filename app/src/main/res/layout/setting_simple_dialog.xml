@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *******************************************************************************
+ *
+ * Copyright (C) 2020 Dialog Semiconductor.
+ * This computer program includes Confidential, Proprietary Information
+ * of Dialog Semiconductor. All Rights Reserved.
+ *
+ *******************************************************************************
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp" >
+
+    <TextView
+        android:id="@+id/valueLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/dialog_value_label"
+        android:textColor="#333"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/value"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="5dp" >
+        <RadioGroup
+            android:id="@+id/valueList"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/gpioView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/gpio_spinner_background" >
+            <Spinner
+                android:id="@+id/gpioPort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/gpio_spinner_background" >
+            <Spinner
+                android:id="@+id/gpioPin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp" />
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

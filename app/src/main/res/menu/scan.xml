@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *******************************************************************************
+ *
+ * Copyright (C) 2020 Dialog Semiconductor.
+ * This computer program includes Confidential, Proprietary Information
+ * of Dialog Semiconductor. All Rights Reserved.
+ *
+ *******************************************************************************
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_scan"
+        android:title="@string/menu_scan"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_filter"
+        android:title="@string/menu_filter"
+        android:icon="@drawable/icon_filter_list"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_info"
+        android:title="@string/menu_info"
+        android:icon="@drawable/icon_info"
+        app:showAsAction="always" />
+
+</menu>

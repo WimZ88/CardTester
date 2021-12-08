@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *******************************************************************************
+ *
+ * Copyright (C) 2020 Dialog Semiconductor.
+ * This computer program includes Confidential, Proprietary Information
+ * of Dialog Semiconductor. All Rights Reserved.
+ *
+ *******************************************************************************
+-->
+<resources>
+
+    <string name="app_name">SmartConfig</string>
+    <string name="dialog_semiconductor">Dialog Semiconductor</string>
+
+    <string name="menu_scan">Scan</string>
+    <string name="menu_stop_scan">Stop Scan</string>
+    <string name="menu_info">Information</string>
+    <string name="menu_filter">Filter</string>
+
+    <string name="activity_disclaimer">Disclaimer</string>
+    <string name="activity_scan_filter">Scan Filter</string>
+
+    <string name="empty_device_list">No devices found</string>
+    <string name="text_start_hint">Please press the SCAN button to search for devices.</string>
+
+    <string name="permission_rationale">SmartConfig needs access to location information in order to scan for Bluetooth Smart devices.</string>
+    <string name="location_permission_rationale">Access to location information is required in order to scan for Bluetooth Smart devices.</string>
+    <string name="storage_permission_rationale">Access to the device\'s storage is required in order to load configuration XML files.</string>
+    <string name="no_location_services_title">Location Services Disabled</string>
+    <string name="no_location_services_msg">It may be required to enable the Location Services on your device in order to scan for Bluetooth Smart devices.</string>
+    <string name="no_location_services_scan">Continue</string>
+    <string name="enable_location_services">Enable</string>
+
+    <string name="pref_category_signal">Signal</string>
+    <string name="pref_rssi_filter">Filter by RSSI</string>
+    <string name="pref_rssi_level">RSSI level</string>
+    <string name="pref_rssi_level_summary">%1$s db</string>
+    <string name="pref_rssi_level_dialog">RSSI level (db)</string>
+    <string name="pref_category_services">Services</string>
+    <string name="pref_suota">SUOTA</string>
+    <string name="pref_dsps">DSPS</string>
+    <string name="pref_other">Other Dialog</string>
+    <string name="pref_unknown">Unknown</string>
+    <string name="pref_category_beacons">Beacons</string>
+    <string name="pref_ibeacon">iBeacon</string>
+    <string name="pref_microsoft">Microsoft</string>
+    <string name="pref_category_pattern">Pattern</string>
+    <string name="pref_pattern_name">Device Name</string>
+    <string name="pref_pattern_name_dialog">Device name pattern</string>
+    <string name="pref_pattern_address">Device Address</string>
+    <string name="pref_pattern_address_dialog">Device address pattern</string>
+    <string name="pref_pattern_data">Advertising Data</string>
+    <string name="pref_pattern_data_dialog">Advertising data pattern</string>
+    <string name="invalid_pattern_message">Invalid pattern</string>
+
+    <string name="device_disconnected">Device disconnected.</string>
+    <string name="no_device_set">No device set.</string>
+
+    <string name="drawer_configuration">Configuration</string>
+    <string name="drawer_information">Information</string>
+    <string name="drawer_disclaimer">Disclaimer</string>
+    <string name="drawer_disconnect">Disconnect</string>
+
+    <string name="scan_signal">%1$d db</string>
+    <string name="scan_unknown">Unknown</string>
+    <string name="scan_suota">SUOTA</string>
+    <string name="scan_dsps">DSPS</string>
+    <string name="scan_iot">IoT</string>
+    <string name="scan_wearable">Wearable</string>
+    <string name="scan_mesh">Mesh</string>
+    <string name="scan_proximity">Proximity</string>
+    <string name="scan_beacon">iBeacon: %1$s %2$04x-%3$04x</string>
+    <string name="scan_microsoft">Microsoft</string>
+
+    <string name="not_available">N/A</string>
+    <string name="config_not_supported">This device does not support the Dialog Configuration service</string>
+    <string name="config_init_failed">Configuration service initialization failure</string>
+    <string name="address_label">Address:</string>
+    <string name="version_label">Version:</string>
+    <string name="status_label">Status:</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_service_discovery">Discovering services…</string>
+    <string name="status_element_discovery">Discovering elements…</string>
+    <string name="status_ready">Ready</string>
+    <string name="status_reading">Reading…</string>
+    <string name="status_applying">Applying…</string>
+    <string name="settings_label">Settings:</string>
+    <string name="waiting_for_elements">Please wait until elements are retrieved.</string>
+    <string name="no_elements_found">No elements found.</string>
+    <string name="button_apply">Apply</string>
+    <string name="dialog_value_label">Set value:</string>
+    <string name="dialog_array_value_label">Set hex array value:</string>
+    <string name="dialog_address_value_label">Set Bluetooth address:</string>
+    <string name="dialog_gpio_value_label">Select GPIO:</string>
+    <string name="dialog_value_list_label">Select value:</string>
+    <string name="invalid_value_message">Invalid value</string>
+    <string name="restore_dialog_title">Restore Settings</string>
+    <string name="restore_dialog_message">Are you sure you want to undo your changes?</string>
+    <string name="write_failed_message">Write failed</string>
+    <string name="read_failed_message">Read failed</string>
+
+    <string-array name="gpio_ports">
+        <item>Port 0</item>
+        <item>Port 1</item>
+        <item>Port 2</item>
+        <item>Port 3</item>
+        <item>Port 4</item>
+        <item>Port 5</item>
+        <item>Port 6</item>
+        <item>Port 7</item>
+        <item>Port 8</item>
+        <item>Port 9</item>
+    </string-array>
+
+    <string-array name="gpio_pins">
+        <item>Pin 0</item>
+        <item>Pin 1</item>
+        <item>Pin 2</item>
+        <item>Pin 3</item>
+        <item>Pin 4</item>
+        <item>Pin 5</item>
+        <item>Pin 6</item>
+        <item>Pin 7</item>
+        <item>Pin 8</item>
+        <item>Pin 9</item>
+        <item>Pin 10</item>
+        <item>Pin 11</item>
+        <item>Pin 12</item>
+        <item>Pin 13</item>
+        <item>Pin 14</item>
+        <item>Pin 15</item>
+        <item>Pin 16</item>
+        <item>Pin 17</item>
+        <item>Pin 18</item>
+        <item>Pin 19</item>
+        <item>Pin 20</item>
+        <item>Pin 21</item>
+        <item>Pin 22</item>
+        <item>Pin 23</item>
+        <item>Pin 24</item>
+        <item>Pin 25</item>
+        <item>Pin 26</item>
+        <item>Pin 27</item>
+        <item>Pin 28</item>
+        <item>Pin 29</item>
+        <item>Pin 30</item>
+        <item>Pin 31</item>
+        <item>Pin 32</item>
+        <item>Pin 33</item>
+        <item>Pin 34</item>
+        <item>Pin 35</item>
+        <item>Pin 36</item>
+        <item>Pin 37</item>
+        <item>Pin 38</item>
+        <item>Pin 39</item>
+        <item>Pin 40</item>
+        <item>Pin 41</item>
+        <item>Pin 42</item>
+        <item>Pin 43</item>
+        <item>Pin 44</item>
+        <item>Pin 45</item>
+        <item>Pin 46</item>
+        <item>Pin 47</item>
+        <item>Pin 48</item>
+        <item>Pin 49</item>
+        <item>Pin 50</item>
+        <item>Pin 51</item>
+        <item>Pin 52</item>
+        <item>Pin 53</item>
+        <item>Pin 54</item>
+        <item>Pin 55</item>
+        <item>Pin 56</item>
+        <item>Pin 57</item>
+        <item>Pin 58</item>
+        <item>Pin 59</item>
+        <item>Pin 60</item>
+        <item>Pin 61</item>
+        <item>Pin 62</item>
+        <item>Pin 63</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *******************************************************************************
+ *
+ * Copyright (C) 2020 Dialog Semiconductor.
+ * This computer program includes Confidential, Proprietary Information
+ * of Dialog Semiconductor. All Rights Reserved.
+ *
+ *******************************************************************************
+-->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:key="signal"
+        android:title="@string/pref_category_signal"
+        app:iconSpaceReserved="false" >
+        <SwitchPreference
+            android:key="rssiFilter"
+            android:title="@string/pref_rssi_filter"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:key="rssiLevel"
+            android:title="@string/pref_rssi_level"
+            android:dialogTitle="@string/pref_rssi_level_dialog"
+            android:defaultValue="-80"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="services"
+        android:title="@string/pref_category_services"
+        app:iconSpaceReserved="false" >
+        <SwitchPreference
+            android:key="suota"
+            android:title="@string/pref_suota"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:key="dsps"
+            android:title="@string/pref_dsps"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:key="other"
+            android:title="@string/pref_other"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:key="unknown"
+            android:title="@string/pref_unknown"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="beacons"
+        android:title="@string/pref_category_beacons"
+        app:iconSpaceReserved="false" >
+        <SwitchPreference
+            android:key="iBeacon"
+            android:title="@string/pref_ibeacon"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:key="microsoft"
+            android:title="@string/pref_microsoft"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="pattern"
+        android:title="@string/pref_category_pattern"
+        app:iconSpaceReserved="false" >
+        <EditTextPreference
+            android:key="name"
+            android:title="@string/pref_pattern_name"
+            android:dialogTitle="@string/pref_pattern_name_dialog"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:key="address"
+            android:title="@string/pref_pattern_address"
+            android:dialogTitle="@string/pref_pattern_address_dialog"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:key="advData"
+            android:title="@string/pref_pattern_data"
+            android:dialogTitle="@string/pref_pattern_data_dialog"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

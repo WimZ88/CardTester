@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *******************************************************************************
+ *
+ * Copyright (C) 2020 Dialog Semiconductor.
+ * This computer program includes Confidential, Proprietary Information
+ * of Dialog Semiconductor. All Rights Reserved.
+ *
+ *******************************************************************************
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp" >
+
+    <ImageView
+        android:id="@+id/scanItemIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/scan_icon_background"
+        android:src="@drawable/icon_dialog" />
+
+    <TextView
+        android:id="@+id/scanItemName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/scanItemIcon"
+        android:layout_marginTop="5dp"
+        android:text="@string/not_available"
+        android:textColor="#333333"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/scanItemAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scanItemName"
+        android:layout_alignStart="@+id/scanItemName"
+        android:layout_marginTop="2dp"
+        android:text="@string/not_available"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/scanItemDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scanItemAddress"
+        android:layout_alignStart="@+id/scanItemName"
+        android:layout_marginTop="2dp"
+        android:text="@string/scan_unknown"
+        android:textColor="#505050"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:paddingTop="5dp"
+        android:orientation="vertical" >
+
+        <com.diasemi.smartconfig.view.SignalBar
+            android:id="@+id/signalBar"
+            android:layout_width="65dp"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:id="@+id/scanItemRssi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="#666666"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</RelativeLayout>

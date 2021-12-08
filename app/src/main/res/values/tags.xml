@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *******************************************************************************
+ *
+ * Copyright (C) 2020 Dialog Semiconductor.
+ * This computer program includes Confidential, Proprietary Information
+ * of Dialog Semiconductor. All Rights Reserved.
+ *
+ *******************************************************************************
+-->
+<resources>
+    <item type="id" name="element" />
+    <item type="id" name="views" />
+    <item type="id" name="value" />
+    <item type="id" name="typeface" />
+</resources>

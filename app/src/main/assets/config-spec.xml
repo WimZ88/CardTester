@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ *******************************************************************************
+ *
+ * Copyright (C) 2020 Dialog Semiconductor.
+ * This computer program includes Confidential, Proprietary Information
+ * of Dialog Semiconductor. All Rights Reserved.
+ *
+ *******************************************************************************
+-->
+<config-spec>
+
+    <parameterGroups>
+
+        <group id="0x01" name="ADVERTISE">
+            <element id="0x00">
+                <name>Advertise Interval Minimum</name>
+                <type>uint16_t</type>
+                <units>BLE slots</units>
+                <max_size>2</max_size>
+                <min>32</min>
+                <max>16384</max>
+            </element>
+            <element id="0x01">
+                <name>Advertise Interval Maximum</name>
+                <type>uint16_t</type>
+                <units>BLE slots</units>
+                <max_size>2</max_size>
+                <min>32</min>
+                <max>16384</max>
+            </element>
+            <element id="0x02">
+                <name>Advertise Channel Map</name>
+                <type>adv_channel_map_t</type>
+                <max_size>1</max_size>
+                <min>1</min>
+                <max>7</max>
+            </element>
+            <element id="0x03">
+                <name>Advertise Mode</name>
+                <type>gap_adv_mode_t</type>
+                <max_size>1</max_size>
+            </element>
+            <element id="0x04">
+                <name>Advertise Filter Policy</name>
+                <type>adv_filter_policy_t</type>
+                <max_size>1</max_size>
+            </element>
+            <element id="0x05">
+                <name>Advertise Peer Address</name>
+                <type>bd_address_t</type>
+                <max_size>6</max_size>
+            </element>
+            <element id="0x06">
+                <name>Advertise Peer Address Type</name>
+                <type>peer_addr_type_t</type>
+                <max_size>1</max_size>
+            </element>
+        </group>
+
+        <group id="0x02" name="GAP">
+            <element id="0x00">
+                <name>GAP Role</name>
+                <type>gap_role_t</type>
+                <max_size>1</max_size>
+            </element>
+            <element id="0x01">
+                <name>MTU</name>
+                <type>uint16_t</type>
+                <units>bytes</units>
+                <max_size>2</max_size>
+                <min>23</min>
+                <max>512</max>
+            </element>
+            <element id="0x02">
+                <name>GAP Address Type</name>
+                <type>gapm_addr_type_t</type>
+                <max_size>1</max_size>
+            </element>
+            <element id="0x03">
+                <name>GAP Address</name>
+                <type>bd_address_t</type>
+                <max_size>6</max_size>
+            </element>
+            <element id="0x04">
+                <name>GAP Regenerated Address Duration</name>
+                <type>uint16_t</type>
+                <units>ms</units>
+                <max_size>2</max_size>
+            </element>
+            <element id="0x05">
+                <name>GAP Device IRK</name>
+                <type>array</type>
+                <max_size>16</max_size>
+            </element>
+            <element id="0x06">
+                <name>GAP Attribute Configuration</name>
+                <type>gapm_att_cfg_flag_t</type>
+                <max_size>1</max_size>
+            </element>
+            <element id="0x07">
+                <name>GAP Service Start Handle</name>
+                <type>uint16_t</type>
+                <max_size>2</max_size>
+            </element>
+            <element id="0x08">
+                <name>GATT Service Start Handle</name>
+                <type>uint16_t</type>
+                <max_size>2</max_size>
+            </element>
+            <element id="0x09">
+                <name>GAP Maximum MPS</name>
+                <type>uint16_t</type>
+                <units>bytes</units>
+                <max_size>2</max_size>
+            </element>
+            <element id="0x0A">
+                <name>GAP Maximum Tx Octets</name>
+                <type>uint16_t</type>
+                <units>bytes</units>
+                <max_size>2</max_size>
+            </element>
+            <element id="0x0B">
+                <name>GAP Maximum Tx Time</name>
+                <type>uint16_t</type>
+                <units>ms</units>
+                <max_size>2</max_size>
+            </element>
+        </group>
+
+        <group id="0x03" name="CONNECTION">
+            <element id="0x00">
+                <name>Connection Interval Minimum</name>
+                <type>uint16_t</type>
+                <units>BLE doubleslots</units>
+                <max_size>2</max_size>
+                <min>6</min>
+                <max>3200</max>
+            </element>
+            <element id="0x01">
+                <name>Connection Interval Maximum</name>
+                <type>uint16_t</type>
+                <units>BLE doubleslots</units>
+                <max_size>2</max_size>
+                <min>6</min>
+                <max>3200</max>
+            </element>
+            <element id="0x02">
+                <name>Connection Latency</name>
+                <type>uint16_t</type>
+                <units>Connection Events</units>
+                <max_size>2</max_size>
+                <max>499</max>
+            </element>
+            <element id="0x03">
+                <name>Connection Time Out</name>
+                <type>uint16_t</type>
+                <units>10ms timerunits</units>
+                <max_size>2</max_size>
+                <min>10</min>
+                <max>3200</max>
+            </element>
+            <element id="0x04">
+                <name>Connection Event Length Minimum</name>
+                <type>uint16_t</type>
+                <units>BLE doubleslots</units>
+                <max_size>2</max_size>
+            </element>
+            <element id="0x05">
+                <name>Connection Event Length Maximum</name>
+                <type>uint16_t</type>
+                <units>BLE doubleslots</units>
+                <max_size>2</max_size>
+            </element>
+        </group>
+
+        <group id="0x04" name="USER CONFIGURATION">
+            <element id="0x00">
+                <name>User Advertise Data</name>
+                <type>array</type>
+                <max_size>28</max_size>
+            </element>
+            <element id="0x01">
+                <name>User Advertise Data Length</name>
+                <type>uint8_t</type>
+                <max_size>1</max_size>
+                <min>0</min>
+                <max>28</max>
+            </element>
+            <element id="0x02">
+                <name>User Advertise Scan Response Data</name>
+                <type>array</type>
+                <max_size>31</max_size>
+            </element>
+            <element id="0x03">
+                <name>User Advertise Scan Response Data Length</name>
+                <type>uint8_t</type>
+                <max_size>1</max_size>
+                <min>0</min>
+                <max>31</max>
+            </element>
+            <element id="0x04">
+                <name>Device Name</name>
+                <type>string</type>
+                <max_size>29</max_size>
+            </element>
+            <element id="0x05">
+                <name>Device Name Length</name>
+                <type>uint8_t</type>
+                <max_size>1</max_size>
+                <min>0</min>
+                <max>29</max>
+            </element>
+        </group>
+
+        <group id="0x05" name="PERIPHERAL INTERFACES">
+            <element id="0x00">
+                <name>UART baudrate</name>
+                <type>ubaudrate_t</type>
+                <units>bps</units>
+                <default>115200</default>
+                <max_size>1</max_size>
+                <min>1</min>
+                <max>8</max>
+            </element>
+        </group>
+
+        <group id="0x06" name="CENTRAL">
+            <element id="0x00">
+                <name>Central Code</name>
+                <type>central_code_t</type>
+                <default>Direct connection operation</default>
+                <max_size>1</max_size>
+                <min>19</min>
+                <max>22</max>
+            </element>
+            <element id="0x01">
+                <name>Address Source</name>
+                <type>addr_src_t</type>
+                <default>Public or Random Static Address</default>
+                <max_size>1</max_size>
+                <min>0</min>
+                <max>2</max>
+            </element>
+            <element id="0x02">
+                <name>Scan Interval</name>
+                <type>uint16_t</type>
+                <units>ms</units>
+                <default>384</default>
+                <max_size>2</max_size>
+                <min>0</min>
+                <max>1000</max>
+            </element>
+            <element id="0x03">
+                <name>Scan Window</name>
+                <type>uint16_t</type>
+                <units>ms</units>
+                <default>352</default>
+                <max_size>2</max_size>
+                <min>0</min>
+                <max>1000</max>
+            </element>
+            <element id="0x04">
+                <name>Peer Address 0</name>
+                <type>bd_address_t</type>
+                <max_size>6</max_size>
+            </element>
+            <element id="0x05">
+                <name>Peer Address 0 Type</name>
+                <type>uint8_t</type>
+                <max_size>1</max_size>
+                <default>0</default>
+            </element>
+        </group>
+
+        <group id="0x07" name="GPIO FUNCTION">
+            <element id="0x00">
+                <name>UART1_RX</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x01">
+                <name>UART1_TX</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x02">
+                <name>UART1_CTS</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x03">
+                <name>UART1_RTS</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x04">
+                <name>EXT_WAKEUP</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x05">
+                <name>EXT_WAKEUP_POLARITY</name>
+                <type>uint8_t</type>
+                <max_size>1</max_size>
+                <min>0</min>
+                <max>1</max>
+            </element>
+            <element id="0x06">
+                <name>EXT_WAKEUP_DEBOUNCE</name>
+                <type>uint16_t</type>
+                <max_size>2</max_size>
+                <min>0</min>
+                <max>63</max>
+            </element>
+            <element id="0x07">
+                <name>ACTIVE_STATUS_PIN</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x08">
+                <name>WAKEUP_EXT_HOST</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x09">
+                <name>POR_PIN</name>
+                <type>gpio_pin_t</type>
+                <min>0</min>
+                <max>2367</max>
+            </element>
+            <element id="0x0A">
+                <name>POR_PIN_POLARITY</name>
+                <type>uint8_t</type>
+                <max_size>1</max_size>
+                <min>0</min>
+                <max>1</max>
+            </element>
+            <element id="0x0B">
+                <name>POR_PIN_TIMEOUT</name>
+                <type>uint8_t</type>
+                <max_size>1</max_size>
+                <min>0</min>
+                <max>127</max>
+            </element>
+        </group>
+
+    </parameterGroups>
+
+
+    <enumTypes>
+
+        <enum type="adv_channel_map_t" size="1">
+            <item value="0x01" name="ADV_CHNL_37_EN">Channel 37 enabled</item>
+            <item value="0x02" name="ADV_CHNL_38_EN">Channel 38 enabled</item>
+            <item value="0x03" name="ADV_CHNL_37_38_EN">Channels 37 and 38 enabled</item>
+            <item value="0x04" name="ADV_CHNL_39_EN">Channel 39 enabled</item>
+            <item value="0x05" name="ADV_CHNL_37_39_EN">Channels 37 and 39 enabled</item>
+            <item value="0x06" name="ADV_CHNL_38_39_EN">Channels 38 and 39 enabled</item>
+            <item value="0x07" name="ADV_ALL_CHNLS_EN">Channels 37, 38 and 39 enabled</item>
+        </enum>
+
+        <enum type="gap_adv_mode_t" size="1">
+            <item value="0x00" name="GAP_NON_DISCOVERABLE">Non Discoverable</item>
+            <item value="0x01" name="GAP_GEN_DISCOVERABLE">General Discoverable</item>
+            <item value="0x02" name="GAP_LIM_DISCOVERABLE">Limited Discoverable</item>
+            <item value="0x03" name="GAP_BROADCASTER_MODE">Non Discoverable Non Connectable</item>
+        </enum>
+
+        <enum type="adv_filter_policy_t" size="1">
+            <item value="0x00" name="ADV_ALLOW_SCAN_ANY_CON_ANY">Allow Scan and Connection requests from anyone</item>
+            <item value="0x01" name="ADV_ALLOW_SCAN_WLST_CON_ANY">Allow Scan from White List, Connection from anyone</item>
+            <item value="0x02" name="ADV_ALLOW_SCAN_ANY_CON_WLST">Allow Scan from anyone, Connection from White List</item>
+            <item value="0x03" name="ADV_ALLOW_SCAN_WLST_CON_WLST">Allow Scan and Connection requests from White List</item>
+        </enum>
+
+        <enum type="peer_addr_type_t" size="1">
+            <item value="0x00" name="PEER_ADDR_TYPE_PUB">Public peer address type</item>
+            <item value="0x01" name="PEER_ADDR_TYPE_RAND">Random peer address type</item>
+        </enum>
+
+        <enum type="gap_role_t" size="1">
+            <item value="0x00" name="GAP_ROLE_NONE">No role</item>
+            <item value="0x01" name="GAP_ROLE_OBSERVER">Observer role</item>
+            <item value="0x02" name="GAP_ROLE_BROADCASTER">Broadcaster role</item>
+            <item value="0x05" name="GAP_ROLE_CENTRAL">Master/Central role</item>
+            <item value="0x0A" name="GAP_ROLE_PERIPHERAL">Peripheral/Slave role</item>
+            <item value="0x0F" name="GAP_ROLE_ALL">Both peripheral and central roles</item>
+        </enum>
+
+        <enum type="gapm_addr_type_t" size="1">
+            <item value="0x00" name="GAPM_CFG_ADDR_PUBLIC">Public address type</item>
+            <item value="0x01" name="GAPM_CFG_ADDR_PRIVATE">Random static address type</item>
+            <item value="0x02" name="GAPM_CFG_ADDR_PRIVACY">Address generated using Privacy feature in Host</item>
+            <item value="0x04" name="GAPM_CFG_ADDR_PRIVACY_CNTL">Address generated using Privacy feature in Controller</item>
+        </enum>
+
+        <enum type="gapm_att_cfg_flag_t" size="1">
+            <item value="0x03" name="GAPM_MASK_ATT_NAME_PERM">Device Name write permission requirements for peer device</item>
+            <item value="0x0C" name="GAPM_MASK_ATT_APPEARENCE_PERM">Device Appearance write permission requirements for peer device</item>
+            <item value="0x10" name="GAPM_MASK_ATT_SLV_PREF_CON_PAR_EN">Slave Preferred Connection Parameters present in GAP attribute database</item>
+            <item value="0x20" name="GAPM_MASK_ATT_SVC_CHG_EN">Service change feature present in GATT attribute database</item>
+            <item value="0x40" name="GAPM_MASK_ATT_COC_NO_CREDIT_DISCARD">CoC zero credit behaviour</item>
+            <item value="0x80" name="GAPM_MASK_ATT_DBG_MODE_EN">Service change feature present in GATT attribute database.</item>
+        </enum>
+
+        <enum type="ubaudrate_t" size="1">
+            <item value="0x01" name="BAUDRATE_9K6">9600</item>
+            <item value="0x02" name="BAUDRATE_19K2">19200</item>
+            <item value="0x03" name="BAUDRATE_38K4">38400</item>
+            <item value="0x04" name="BAUDRATE_57K6">57600</item>
+            <item value="0x05" name="BAUDRATE_115K2">115200</item>
+            <item value="0x06" name="BAUDRATE_230K4">230400</item>
+            <item value="0x07" name="BAUDRATE_460K8">460800</item>
+            <item value="0x08" name="BAUDRATE_921K6">921600</item>
+        </enum>
+
+        <enum type="central_code_t" size="1">
+            <item value="0x13" name="GAPM_CONNECTION_DIRECT">Direct connection operation</item>
+            <item value="0x14" name="GAPM_CONNECTION_AUTO">Automatic connection operation</item>
+            <item value="0x15" name="GAPM_CONNECTION_SELECTIVE">Selective connection operation</item>
+            <item value="0x16" name="GAPM_CONNECTION_NAME_REQUEST">Name Request operation</item>
+        </enum>
+
+        <enum type="addr_src_t" size="1">
+            <item value="0x00" name="GAPM_STATIC_ADDR">Public or Random Static Address</item>
+            <item value="0x01" name="GAPM_GEN_RSLV_ADDR">Generated Random Resolvable Private Address</item>
+            <item value="0x02" name="GAPM_GEN_NON_RSLV_ADDR">Generated Random non-Resolvable Private Address</item>
+        </enum>
+
+    </enumTypes>
+
+
+    <customTypes>
+
+        <custom name="gpio_pin_t" type="struct" size="2">
+            <item value="0x00" name="pin" type="uint8_t" size="1">Pin ID</item>
+            <item value="0x01" name="port" type="uint8_t" size="1">Port ID</item>
+        </custom>
+
+        <custom name="bd_address_t" type="array" size="6"/>
+
+    </customTypes>
+
+</config-spec>
