@@ -23,6 +23,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -98,7 +100,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             swnp_end_communication,
             null};
 
-    private int swnp_sequence_idx=1; // wait start
+    private int swnp_sequence_idx=0; // wait start
 
     private BluetoothGatt mybluetoothGatt;
     final public String FromTBS = "a304d2495cb8"; // WJZ. cant find the name
@@ -114,9 +116,17 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
 //            swnp_sequence_idx=0;
             mybluetoothGatt = device.connectGatt(this,true, bluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
         } else {
-            Log.e("BLE","Sendcard start sequence ");
-            swnp_sequence_idx=0;
-            Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+            final Handler handler = new Handler(Looper.getMainLooper());
+            Log.e("BLE","Delay 1st write ");
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("BLE","Sendcard start sequence ");
+                    swnp_sequence_idx=0;
+                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+                    //Do something after 100ms
+                }
+            }, 500);
         }
     }
 
@@ -168,8 +178,6 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                 } else {
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                 }
-//                BLERXQueu.add(value);
-//                TBS2_received((value));
             }
         }
         @Override
