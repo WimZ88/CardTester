@@ -60,6 +60,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,10 +82,27 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     private RuntimePermissionChecker permissionChecker;
 
 
+    private byte[] swnp_initialize = {0,0,0,1,0};
+    private byte[] swnp_get_unitid = {0,7,0,1,0};
+    private byte[] swnp_get_sessionkey = {0,1,0,1,0};
+    private byte[] swnp_send_card_id = {0x00, 0x03, 0x00, 0x10,  (byte) 0xA0, 0x2C,  (byte) 0xFB,
+            0x52, 0x6F, 0x64,  (byte) 0xB4,  (byte) 0xC0, 0x30,  (byte) 0xC8, 0x19,  (byte) 0x8E,
+            0x49,  (byte) 0xE4, (byte)  0xA4, 0x36};
+    private byte[] swnp_end_communication = {0,6,0,1,0};
+
+    private byte [][] swnp_sequence = {
+            swnp_initialize,
+            swnp_get_unitid,
+            swnp_get_sessionkey,
+            swnp_send_card_id,
+            swnp_end_communication,
+            null};
+
+    private int swnp_sequence_idx=0;
+
     private BluetoothGatt mybluetoothGatt;
     final public String FromTBS = "a304d2495cb8"; // WJZ. cant find the name
     final public String ToTBS = "a304d2495cba";
-
 
     public BluetoothGattCharacteristic ch_write;
     public BluetoothGattCharacteristic ch_read;
@@ -93,8 +111,8 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.b_card:
-                    byte[] swnp_init = {0,0,0,1,0};
-                    Write_BLE(swnp_init);
+                    swnp_sequence_idx=0;
+                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                     break;
             }
         }
@@ -117,7 +135,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                 // Attempts to discover services after successful connection.
                 mybluetoothGatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                // disconnected from the GATT Server
+                mybluetoothGatt=null;
             }
         }
         @Override
@@ -125,6 +143,11 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             final byte[] value = characteristic.getValue();
             if (characteristic == ch_read){
                 Log.e("CHAR234","onCharacteristicChanged TBS2" + characteristic.getUuid());
+                if (swnp_sequence[swnp_sequence_idx] == null){
+                    mybluetoothGatt.disconnect();
+                } else {
+                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+                }
 //                BLERXQueu.add(value);
 //                TBS2_received((value));
             }
