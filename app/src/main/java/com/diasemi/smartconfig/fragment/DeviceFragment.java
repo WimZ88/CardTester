@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.diasemi.smartconfig.R;
+import com.diasemi.smartconfig.activity.DeviceActivity;
 import com.diasemi.smartconfig.config.ConfigElement;
 import com.diasemi.smartconfig.config.ConfigEvent;
 import com.diasemi.smartconfig.config.ConfigSpec;
@@ -57,8 +58,10 @@ public class DeviceFragment extends Fragment {
     private Button apply;
     private IconicsImageButton refresh, restore;
     private String versionString;
+    private DeviceActivity mDeviceActivity;
 
-    public DeviceFragment() {
+    public DeviceFragment(DeviceActivity parent) {
+        mDeviceActivity=parent; // need to call button there
     }
 
     @Override
@@ -87,6 +90,9 @@ public class DeviceFragment extends Fragment {
         deviceAddress = view.findViewById(R.id.deviceAddress);
         version = view.findViewById(R.id.versionText);
         status = view.findViewById(R.id.statusText);
+        Button b_open= (Button) view.findViewById(R.id.b_card);
+        b_open.setOnClickListener(mDeviceActivity.bt_click);
+
 //        settingsPlaceholder = view.findViewById(R.id.settingsPlaceholder);
 //        settingsScroll = view.findViewById(R.id.settingsScroll);
 //        settingsList = view.findViewById(R.id.settingsList);

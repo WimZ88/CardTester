@@ -89,7 +89,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     public BluetoothGattCharacteristic ch_write;
     public BluetoothGattCharacteristic ch_read;
 
-    protected View.OnClickListener bt_click = new View.OnClickListener() {
+    public View.OnClickListener bt_click = new View.OnClickListener() {
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.b_card:
@@ -170,8 +170,6 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_device);
 
-        Button b_open= (Button) findViewById(R.id.b_card);
-        b_open.setOnClickListener(bt_click);
 
         permissionChecker = new RuntimePermissionChecker(this, savedInstanceState);
         permissionChecker.registerPermissionRequestCallback(REQUEST_STORAGE_PERMISSION, new RuntimePermissionChecker.PermissionRequestCallback() {
@@ -221,6 +219,8 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
 
         drawer = createDrawer();
         drawer.setSelection(MENU_CONFIGURATION);
+
+
     }
 
     @Override
@@ -332,7 +332,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             case MENU_CONFIGURATION:
                 toolbar.setSubtitle(R.string.dialog_semiconductor);
                 if (deviceFragment == null)
-                    deviceFragment = new DeviceFragment();
+                    deviceFragment = new DeviceFragment(this);
                 return deviceFragment;
 
             case MENU_INFO:
