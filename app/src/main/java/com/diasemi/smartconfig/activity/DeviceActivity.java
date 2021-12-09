@@ -114,6 +114,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     private int response_timeout =0;
     private boolean gatt_is_connected = false;
 
+    private int test_run=1;
     public static String Bytes2String(byte [] b) {
         String s="";
         for (byte i : b) {
@@ -136,12 +137,12 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e("BLE","Sendcard start sequence ");
+                    Log.e("BLE","Sendcard start sequence number " + test_run++);
                     swnp_sequence_idx=0;
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                     //Do something after 100ms
                 }
-            }, 50);
+            }, 500);
         }
     }
 
@@ -181,19 +182,26 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 if (gatt_is_connected){
                     // noticed multiple new connects.
-                    Log.e("BLE","GATT is already CONNECTED");
+                    Log.e("BLE","GATT is already CONNECTED "+status);
                 } else{
-                    Log.e("BLE","GATT CONNECT");
+                    Log.e("BLE","GATT CONNECT "+ status);
                     response_timeout=500; //5 second timeout
                     mybluetoothGatt.discoverServices();
                     gatt_is_connected=true;
                 }
 //                broadcastUpdate(ACTION_GATT_CONNECTED);
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.e("BLE","GATT DISCONNECT");
-                gatt_is_connected=false;
-                mybluetoothGatt=null;
-                // send_card();
+                if (gatt_is_connected) {
+                    Log.e("BLE", "GATT DISCONNECT "+status);
+                    gatt_is_connected = false;
+                    mybluetoothGatt = null;
+                    send_card();
+                } else {
+                    Log.e("BLE", "GATT DISCONNECT AGAIN "+status );
+
+                }
+            } else {
+                Log.e("BLE", "GATT UNKNOWN STATE "+status);
             }
         }
         @Override
