@@ -98,7 +98,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             swnp_end_communication,
             null};
 
-    private int swnp_sequence_idx=0;
+    private int swnp_sequence_idx=1; // wait start
 
     private BluetoothGatt mybluetoothGatt;
     final public String FromTBS = "a304d2495cb8"; // WJZ. cant find the name
@@ -107,24 +107,42 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     public BluetoothGattCharacteristic ch_write;
     public BluetoothGattCharacteristic ch_read;
 
+
+    public void send_card(){
+        if (mybluetoothGatt == null){
+            Log.e("BLE","Sendcard connect gatt ");
+//            swnp_sequence_idx=0;
+            mybluetoothGatt = device.connectGatt(this,true, bluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
+        } else {
+            Log.e("BLE","Sendcard start sequence ");
+            swnp_sequence_idx=0;
+            Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+        }
+    }
+
     public View.OnClickListener bt_click = new View.OnClickListener() {
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.b_card:
-                    swnp_sequence_idx=0;
-                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+                    send_card();
                     break;
             }
         }
     };
 
-
     public void Write_BLE(byte[] towrite){
+        if (ch_write == null || mybluetoothGatt == null)
+            Log.e("BLE","NO GATT on write ");
         ch_write.setValue(towrite);
         ch_write.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
         mybluetoothGatt.writeCharacteristic(ch_write);
     }
 
+    public void Gatt_disconnect(){
+        if (mybluetoothGatt == null)
+            return;
+        mybluetoothGatt.disconnect();
+    }
 
     private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
         @Override
@@ -133,8 +151,10 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                 // successfully connected to the GATT Server
 //                broadcastUpdate(ACTION_GATT_CONNECTED);
                 // Attempts to discover services after successful connection.
+                Log.e("BLE","GATT CONNECT");
                 mybluetoothGatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Log.e("BLE","GATT DISCONNECT");
                 mybluetoothGatt=null;
             }
         }
@@ -156,12 +176,12 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
         public void onServicesDiscovered(@NotNull final BluetoothGatt gatt, final int status) {
             final List<BluetoothGattService> services = gatt.getServices();
             for ( BluetoothGattService service : services){
-                Log.e("CHAR234 #","service " + service.getUuid().toString());
+//                Log.e("CHAR234 #","service " + service.getUuid().toString());
                 for (BluetoothGattCharacteristic ristic : service.getCharacteristics()){
                     String uid = ristic.getUuid().toString();
-                    Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
+//                    Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
                     if (uid.contains(FromTBS)){
-                        Log.e("CHAR234","char read " + uid);
+                        Log.e("BLE","char read " + uid);
                         ch_read=ristic;
                         UUID uid2=ch_read.getUuid();
                         gatt.setCharacteristicNotification(ch_read,true);
@@ -179,10 +199,13 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
 
                     }
                     if (uid.contains(ToTBS)){
-                        Log.e("CHAR234","char write " + uid);
+                        Log.e("BLE","char write " + uid);
                         ch_write=ristic;
                     }
                 }
+            }
+            if (swnp_sequence_idx == 0) { //sendcard was called in disconnected state
+                send_card();
             }
         }
     };
