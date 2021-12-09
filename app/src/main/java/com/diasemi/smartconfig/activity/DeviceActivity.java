@@ -57,6 +57,7 @@ import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -109,15 +110,29 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     public BluetoothGattCharacteristic ch_write;
     public BluetoothGattCharacteristic ch_read;
 
+    private Thread timeoutcheck;
+    private int response_timeout =0;
+    private boolean gatt_is_connected = false;
 
+    public static String Bytes2String(byte [] b) {
+        String s="";
+        for (byte i : b) {
+            s+=String.format("%02X ", i);
+        }
+        return s;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void send_card(){
         if (mybluetoothGatt == null){
             Log.e("BLE","Sendcard connect gatt ");
-//            swnp_sequence_idx=0;
+            swnp_sequence_idx=0;
             mybluetoothGatt = device.connectGatt(this,true, bluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
         } else {
             final Handler handler = new Handler(Looper.getMainLooper());
             Log.e("BLE","Delay 1st write ");
+            response_timeout=15;
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -126,11 +141,12 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                     //Do something after 100ms
                 }
-            }, 500);
+            }, 50);
         }
     }
 
     public View.OnClickListener bt_click = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.b_card:
@@ -143,9 +159,13 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     public void Write_BLE(byte[] towrite){
         if (ch_write == null || mybluetoothGatt == null)
             Log.e("BLE","NO GATT on write ");
-        ch_write.setValue(towrite);
-        ch_write.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-        mybluetoothGatt.writeCharacteristic(ch_write);
+        else {
+            Log.e("BLE","TX " + Bytes2String(towrite));
+            ch_write.setValue(towrite);
+            ch_write.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+            mybluetoothGatt.writeCharacteristic(ch_write);
+            response_timeout = 5; //500ms timeout
+        }
     }
 
     public void Gatt_disconnect(){
@@ -155,24 +175,32 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     }
 
     private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                // successfully connected to the GATT Server
+                if (gatt_is_connected){
+                    // noticed multiple new connects.
+                    Log.e("BLE","GATT is already CONNECTED");
+                } else{
+                    Log.e("BLE","GATT CONNECT");
+                    response_timeout=500; //5 second timeout
+                    mybluetoothGatt.discoverServices();
+                    gatt_is_connected=true;
+                }
 //                broadcastUpdate(ACTION_GATT_CONNECTED);
-                // Attempts to discover services after successful connection.
-                Log.e("BLE","GATT CONNECT");
-                mybluetoothGatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.e("BLE","GATT DISCONNECT");
+                gatt_is_connected=false;
                 mybluetoothGatt=null;
+                // send_card();
             }
         }
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             final byte[] value = characteristic.getValue();
             if (characteristic == ch_read){
-                Log.e("CHAR234","onCharacteristicChanged TBS2" + characteristic.getUuid());
+                Log.e("BLE","RX " + Bytes2String(value));
                 if (swnp_sequence[swnp_sequence_idx] == null){
                     mybluetoothGatt.disconnect();
                 } else {
@@ -180,6 +208,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                 }
             }
         }
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onServicesDiscovered(@NotNull final BluetoothGatt gatt, final int status) {
             final List<BluetoothGattService> services = gatt.getServices();
@@ -189,7 +218,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     String uid = ristic.getUuid().toString();
 //                    Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
                     if (uid.contains(FromTBS)){
-                        Log.e("BLE","char read " + uid);
+                        Log.e("BLE","read channel " + uid);
                         ch_read=ristic;
                         UUID uid2=ch_read.getUuid();
                         gatt.setCharacteristicNotification(ch_read,true);
@@ -207,7 +236,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
 
                     }
                     if (uid.contains(ToTBS)){
-                        Log.e("BLE","char write " + uid);
+                        Log.e("BLE","write channel " + uid);
                         ch_write=ristic;
                     }
                 }
@@ -223,7 +252,29 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_device);
-
+        response_timeout=100;
+        timeoutcheck = new Thread() {
+            @Override
+            public void run() {
+                // expect response after response_timeout else something went wrong
+                try {
+                    while(true) {
+                        Thread.sleep(100);
+                        response_timeout--;
+                        if (mybluetoothGatt != null && response_timeout==0) { // connected
+                            if (response_timeout < 0) {
+                                Log.e(TAG, "TIMEOUT no response");
+                                mybluetoothGatt.disconnect();
+                            }
+                        }
+                        if (response_timeout < 0) response_timeout=-1;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        timeoutcheck.start();
 
         permissionChecker = new RuntimePermissionChecker(this, savedInstanceState);
         permissionChecker.registerPermissionRequestCallback(REQUEST_STORAGE_PERMISSION, new RuntimePermissionChecker.PermissionRequestCallback() {
@@ -280,10 +331,11 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+        timeoutcheck.interrupt();
         EventBus.getDefault().unregister(this);
         if (manager != null)
             manager.disconnect();
-        super.onDestroy();
+        super.onDestroy(); // waarom hier?
     }
 
     @Override
