@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.diasemi.smartconfig.R;
+import com.diasemi.smartconfig.activity.DeviceActivity;
 import com.diasemi.smartconfig.config.ConfigElement;
 import com.diasemi.smartconfig.config.ConfigEvent;
 import com.diasemi.smartconfig.config.ConfigSpec;
@@ -57,8 +58,10 @@ public class DeviceFragment extends Fragment {
     private Button apply;
     private IconicsImageButton refresh, restore;
     private String versionString;
+    private DeviceActivity mDeviceActivity;
 
-    public DeviceFragment() {
+    public DeviceFragment(DeviceActivity parent) {
+        mDeviceActivity=parent; // need to call button there
     }
 
     @Override
@@ -87,148 +90,151 @@ public class DeviceFragment extends Fragment {
         deviceAddress = view.findViewById(R.id.deviceAddress);
         version = view.findViewById(R.id.versionText);
         status = view.findViewById(R.id.statusText);
-        settingsPlaceholder = view.findViewById(R.id.settingsPlaceholder);
-        settingsScroll = view.findViewById(R.id.settingsScroll);
-        settingsList = view.findViewById(R.id.settingsList);
-        progress = view.findViewById(R.id.progress);
-        apply = view.findViewById(R.id.applyButton);
-        refresh = view.findViewById(R.id.refreshButton);
-        restore = view.findViewById(R.id.restoreButton);
+        Button b_open= (Button) view.findViewById(R.id.b_card);
+        b_open.setOnClickListener(mDeviceActivity.bt_click);
+
+//        settingsPlaceholder = view.findViewById(R.id.settingsPlaceholder);
+//        settingsScroll = view.findViewById(R.id.settingsScroll);
+//        settingsList = view.findViewById(R.id.settingsList);
+//        progress = view.findViewById(R.id.progress);
+//        apply = view.findViewById(R.id.applyButton);
+//        refresh = view.findViewById(R.id.refreshButton);
+//        restore = view.findViewById(R.id.restoreButton);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        manager = ((ConfigurationManager.Holder) getActivity()).getConfigurationManager();
-        device = manager.getDevice();
-
-        if (device.getName() != null)
-            deviceName.setText(device.getName());
-        deviceAddress.setText(device.getAddress());
-
-        settingsList.setEnabled(false);
-
-        apply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Applying settings");
-                manager.writeModifiedElements();
-                updateStatus();
-            }
-        });
-
-        refresh.setEnabled(false);
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Refresh settings");
-                manager.readAllElements();
-                updateStatus();
-            }
-        });
-
-        restore.setEnabled(false);
-        restore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.restore_dialog_title)
-                        .setMessage(R.string.restore_dialog_message)
-                        .setCancelable(true)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "Restore settings");
-                                for (ConfigElement element : manager.getElements()) {
-                                    element.resetWriteData();
-                                    element.getUi().updateView(manager, settingsList.findViewWithTag(element));
-                                }
-                                checkModified();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show();
-            }
-        });
-
-        if (manager.isReady() || manager.servicesDiscovered() && manager.configNotSupported()) {
-            initializeSettingsList();
-            checkModified();
-            if (versionString == null) {
-                if (manager.hasDeviceInfo(ConfigSpec.CHARACTERISTIC_SOFTWARE_REVISION_STRING)) {
-                    manager.readDeviceInfo(ConfigSpec.CHARACTERISTIC_SOFTWARE_REVISION_STRING);
-                } else {
-                    if (manager.getVersion() != null)
-                        versionString = manager.getVersion();
-                    else
-                        manager.readVersion();
-                }
-            }
-        }
-
-        if (versionString != null)
-            version.setText(versionString);
-
-        updateStatus();
+//        manager = ((ConfigurationManager.Holder) getActivity()).getConfigurationManager();
+//        device = manager.getDevice();
+//
+//        if (device.getName() != null)
+//            deviceName.setText(device.getName());
+//        deviceAddress.setText(device.getAddress());
+//
+//        settingsList.setEnabled(false);
+//
+//        apply.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "Applying settings");
+//                manager.writeModifiedElements();
+//                updateStatus();
+//            }
+//        });
+//
+//        refresh.setEnabled(false);
+//        refresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "Refresh settings");
+//                manager.readAllElements();
+//                updateStatus();
+//            }
+//        });
+//
+//        restore.setEnabled(false);
+//        restore.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new AlertDialog.Builder(getActivity())
+//                        .setTitle(R.string.restore_dialog_title)
+//                        .setMessage(R.string.restore_dialog_message)
+//                        .setCancelable(true)
+//                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                Log.d(TAG, "Restore settings");
+//                                for (ConfigElement element : manager.getElements()) {
+//                                    element.resetWriteData();
+//                                    element.getUi().updateView(manager, settingsList.findViewWithTag(element));
+//                                }
+//                                checkModified();
+//                            }
+//                        })
+//                        .setNegativeButton(android.R.string.cancel, null)
+//                        .show();
+//            }
+//        });
+//
+//        if (manager.isReady() || manager.servicesDiscovered() && manager.configNotSupported()) {
+//            initializeSettingsList();
+//            checkModified();
+//            if (versionString == null) {
+//                if (manager.hasDeviceInfo(ConfigSpec.CHARACTERISTIC_SOFTWARE_REVISION_STRING)) {
+//                    manager.readDeviceInfo(ConfigSpec.CHARACTERISTIC_SOFTWARE_REVISION_STRING);
+//                } else {
+//                    if (manager.getVersion() != null)
+//                        versionString = manager.getVersion();
+//                    else
+//                        manager.readVersion();
+//                }
+//            }
+//        }
+//
+//        if (versionString != null)
+//            version.setText(versionString);
+//
+//        updateStatus();
     }
 
     private void initializeSettingsList() {
-        if (manager.getElements().isEmpty()) {
-            settingsPlaceholder.setVisibility(View.VISIBLE);
-            settingsScroll.setVisibility(View.GONE);
-            progress.setVisibility(View.GONE);
-            settingsPlaceholder.setText(R.string.no_elements_found);
-            return;
-        }
-        settingsPlaceholder.setVisibility(View.GONE);
-        settingsScroll.setVisibility(View.VISIBLE);
-        ConfigUi.initializeSettingsList(manager, settingsList, getLayoutInflater(), getFragmentManager());
+//        if (manager.getElements().isEmpty()) {
+//            settingsPlaceholder.setVisibility(View.VISIBLE);
+//            settingsScroll.setVisibility(View.GONE);
+//            progress.setVisibility(View.GONE);
+//            settingsPlaceholder.setText(R.string.no_elements_found);
+//            return;
+//        }
+//        settingsPlaceholder.setVisibility(View.GONE);
+//        settingsScroll.setVisibility(View.VISIBLE);
+//        ConfigUi.initializeSettingsList(manager, settingsList, getLayoutInflater(), getFragmentManager());
     }
 
     private void updateStatus() {
-        int statusText = R.string.status_connecting;
-        switch (manager.getState()) {
-            case ConfigurationManager.DISCONNECTED:
-                statusText = R.string.status_disconnected;
-                progress.setVisibility(View.GONE);
-                settingsSetEnabled(false);
-                refresh.setEnabled(false);
-                break;
-
-            case ConfigurationManager.CONNECTING:
-                statusText = R.string.status_connecting;
-                progress.setVisibility(View.VISIBLE);
-                break;
-
-            case ConfigurationManager.CONNECTED:
-                statusText = R.string.status_connected;
-                break;
-
-            case ConfigurationManager.SERVICE_DISCOVERY:
-                statusText = R.string.status_service_discovery;
-                break;
-
-            case ConfigurationManager.ELEMENT_DISCOVERY:
-                statusText = R.string.status_element_discovery;
-                progress.setVisibility(View.VISIBLE);
-                apply.setEnabled(false);
-                refresh.setEnabled(false);
-                restore.setEnabled(false);
-                break;
-
-            case ConfigurationManager.READY:
-                boolean pending = manager.isReadPending() || manager.isWritePending();
-                if (manager.isReadPending())
-                    statusText = R.string.status_reading;
-                else if (manager.isWritePending())
-                    statusText = R.string.status_applying;
-                else
-                    statusText = R.string.status_ready;
-                progress.setVisibility(pending ? View.VISIBLE : View.GONE);
-                settingsSetEnabled(!pending);
-                refresh.setEnabled(!pending);
-                break;
-        }
+        int statusText = R.string.status_testcard;
+//        switch (manager.getState()) {
+//            case ConfigurationManager.DISCONNECTED:
+//                statusText = R.string.status_disconnected;
+//                progress.setVisibility(View.GONE);
+//                settingsSetEnabled(false);
+//                refresh.setEnabled(false);
+//                break;
+//
+//            case ConfigurationManager.CONNECTING:
+//                statusText = R.string.status_connecting;
+//                progress.setVisibility(View.VISIBLE);
+//                break;
+//
+//            case ConfigurationManager.CONNECTED:
+//                statusText = R.string.status_connected;
+//                break;
+//
+//            case ConfigurationManager.SERVICE_DISCOVERY:
+//                statusText = R.string.status_service_discovery;
+//                break;
+//
+//            case ConfigurationManager.ELEMENT_DISCOVERY:
+////                statusText = R.string.status_element_discovery;
+////                progress.setVisibility(View.VISIBLE);
+////                apply.setEnabled(false);
+////                refresh.setEnabled(false);
+////                restore.setEnabled(false);
+//                break;
+//
+//            case ConfigurationManager.READY:
+//                boolean pending = manager.isReadPending() || manager.isWritePending();
+//                if (manager.isReadPending())
+//                    statusText = R.string.status_reading;
+//                else if (manager.isWritePending())
+//                    statusText = R.string.status_applying;
+//                else
+//                    statusText = R.string.status_ready;
+//                progress.setVisibility(pending ? View.VISIBLE : View.GONE);
+//                settingsSetEnabled(!pending);
+//                refresh.setEnabled(!pending);
+//                break;
+//        }
         status.setText(statusText);
     }
 

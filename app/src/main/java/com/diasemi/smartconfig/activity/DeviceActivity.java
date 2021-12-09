@@ -13,12 +13,19 @@ package com.diasemi.smartconfig.activity;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothProfile;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.diasemi.smartconfig.R;
@@ -53,6 +60,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 public class DeviceActivity extends AppCompatActivity implements ConfigurationManager.Holder {
     private final static String TAG = "DeviceActivity";
 
@@ -70,11 +81,118 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     private Fragment deviceFragment, infoFragment, disclaimerFragment;
     private RuntimePermissionChecker permissionChecker;
 
+
+    private byte[] swnp_initialize = {0,0,0,1,0};
+    private byte[] swnp_get_unitid = {0,7,0,1,0};
+    private byte[] swnp_get_sessionkey = {0,1,0,1,0};
+    private byte[] swnp_send_card_id = {0x00, 0x03, 0x00, 0x10,  (byte) 0xA0, 0x2C,  (byte) 0xFB,
+            0x52, 0x6F, 0x64,  (byte) 0xB4,  (byte) 0xC0, 0x30,  (byte) 0xC8, 0x19,  (byte) 0x8E,
+            0x49,  (byte) 0xE4, (byte)  0xA4, 0x36};
+    private byte[] swnp_end_communication = {0,6,0,1,0};
+
+    private byte [][] swnp_sequence = {
+            swnp_initialize,
+            swnp_get_unitid,
+            swnp_get_sessionkey,
+            swnp_send_card_id,
+            swnp_end_communication,
+            null};
+
+    private int swnp_sequence_idx=0;
+
+    private BluetoothGatt mybluetoothGatt;
+    final public String FromTBS = "a304d2495cb8"; // WJZ. cant find the name
+    final public String ToTBS = "a304d2495cba";
+
+    public BluetoothGattCharacteristic ch_write;
+    public BluetoothGattCharacteristic ch_read;
+
+    public View.OnClickListener bt_click = new View.OnClickListener() {
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.b_card:
+                    swnp_sequence_idx=0;
+                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+                    break;
+            }
+        }
+    };
+
+
+    public void Write_BLE(byte[] towrite){
+        ch_write.setValue(towrite);
+        ch_write.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mybluetoothGatt.writeCharacteristic(ch_write);
+    }
+
+
+    private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                // successfully connected to the GATT Server
+//                broadcastUpdate(ACTION_GATT_CONNECTED);
+                // Attempts to discover services after successful connection.
+                mybluetoothGatt.discoverServices();
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                mybluetoothGatt=null;
+            }
+        }
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            final byte[] value = characteristic.getValue();
+            if (characteristic == ch_read){
+                Log.e("CHAR234","onCharacteristicChanged TBS2" + characteristic.getUuid());
+                if (swnp_sequence[swnp_sequence_idx] == null){
+                    mybluetoothGatt.disconnect();
+                } else {
+                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+                }
+//                BLERXQueu.add(value);
+//                TBS2_received((value));
+            }
+        }
+        @Override
+        public void onServicesDiscovered(@NotNull final BluetoothGatt gatt, final int status) {
+            final List<BluetoothGattService> services = gatt.getServices();
+            for ( BluetoothGattService service : services){
+                Log.e("CHAR234 #","service " + service.getUuid().toString());
+                for (BluetoothGattCharacteristic ristic : service.getCharacteristics()){
+                    String uid = ristic.getUuid().toString();
+                    Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
+                    if (uid.contains(FromTBS)){
+                        Log.e("CHAR234","char read " + uid);
+                        ch_read=ristic;
+                        UUID uid2=ch_read.getUuid();
+                        gatt.setCharacteristicNotification(ch_read,true);
+                        int i=0;
+                        for (BluetoothGattDescriptor descriptor:ch_read.getDescriptors()){
+                            // getDescriptor did not work. somehow it has 2. the 2nd blocks writing
+                            if (i == 0) {
+                                Log.e(TAG, "BluetoothGattDescriptor: " + descriptor.getUuid().toString());
+                                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                                boolean writeok = gatt.writeDescriptor(descriptor);
+                                Log.e(TAG, "   write GattDescriptor: " + writeok);
+                            }
+                            i++;
+                        }
+
+                    }
+                    if (uid.contains(ToTBS)){
+                        Log.e("CHAR234","char write " + uid);
+                        ch_write=ristic;
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_device);
+
 
         permissionChecker = new RuntimePermissionChecker(this, savedInstanceState);
         permissionChecker.registerPermissionRequestCallback(REQUEST_STORAGE_PERMISSION, new RuntimePermissionChecker.PermissionRequestCallback() {
@@ -113,16 +231,19 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             Toast.makeText(this, R.string.no_device_set, Toast.LENGTH_LONG).show();
             return;
         }
+        mybluetoothGatt = device.connectGatt(this,true, bluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
 
         EventBus.getDefault().register(this);
         manager = new ConfigurationManager(this, device);
         if (permissionChecker.checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, R.string.storage_permission_rationale, REQUEST_STORAGE_PERMISSION)) {
             ConfigSpec.loadConfigSpec(this);
-            manager.connect();
+            //manager.connect();
         }
 
         drawer = createDrawer();
         drawer.setSelection(MENU_CONFIGURATION);
+
+
     }
 
     @Override
@@ -234,7 +355,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             case MENU_CONFIGURATION:
                 toolbar.setSubtitle(R.string.dialog_semiconductor);
                 if (deviceFragment == null)
-                    deviceFragment = new DeviceFragment();
+                    deviceFragment = new DeviceFragment(this);
                 return deviceFragment;
 
             case MENU_INFO:

@@ -28,12 +28,12 @@
             android:id="@+id/deviceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:text="@string/not_available"
             android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/addressLabel"
@@ -100,92 +100,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" >
-
-        <TextView
-            android:id="@+id/settingsLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:text="@string/settings_label"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:textSize="18sp" />
-
-        <com.mikepenz.iconics.view.IconicsImageButton
-            android:id="@+id/restoreButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_toStartOf="@id/refreshButton"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/button_action"
-            app:iiv_icon="gmd-settings-backup-restore"
-            app:iiv_color="@drawable/button_text_color" />
-
-        <com.mikepenz.iconics.view.IconicsImageButton
-            android:id="@+id/refreshButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/button_action"
-            app:iiv_icon="gmd-refresh"
-            app:iiv_color="@drawable/button_text_color" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" >
 
-        <TextView
-            android:id="@+id/settingsPlaceholder"
+        <Button
+            android:id="@+id/b_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="10dp"
-            android:text="@string/waiting_for_elements"
-            android:textColor="#333"
-            android:textSize="18sp" />
-
-        <ScrollView
-            android:id="@+id/settingsScroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:requiresFadingEdge="vertical"
-            android:fadingEdgeLength="5dp" >
-            <LinearLayout
-                android:id="@+id/settingsList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-            </LinearLayout>
-        </ScrollView>
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerInParent="true"
-            android:indeterminate="true" />
+            android:onClick="bt_click"
+            android:text="@string/card" />
     </RelativeLayout>
-
-    <Button
-        android:id="@+id/applyButton"
-        android:enabled="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/button"
-        android:textColor="@drawable/button_text_color"
-        android:text="@string/button_apply" />
 
 </LinearLayout>
