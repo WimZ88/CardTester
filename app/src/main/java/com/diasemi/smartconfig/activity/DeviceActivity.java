@@ -142,7 +142,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                     //Do something after 100ms
                 }
-            }, 250);
+            }, 10);
         }
     }
 
@@ -271,7 +271,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     while(true) {
                         Thread.sleep(100);
                         response_timeout--;
-                        Log.e(TAG, "          timeout " + response_timeout);
+//                        Log.e(TAG, "          timeout " + response_timeout);
                         if ((mybluetoothGatt != null) && ( response_timeout==0)) { // connected
                             Log.e(TAG, "TIMEOUT no response " + test_run + "@ SEQ " +swnp_sequence_idx);
                             mybluetoothGatt.disconnect();
