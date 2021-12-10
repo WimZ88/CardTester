@@ -23,6 +23,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -55,6 +57,7 @@ import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -98,7 +101,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
             swnp_end_communication,
             null};
 
-    private int swnp_sequence_idx=0;
+    private int swnp_sequence_idx=0; // wait start
 
     private BluetoothGatt mybluetoothGatt;
     final public String FromTBS = "a304d2495cb8"; // WJZ. cant find the name
@@ -107,61 +110,125 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     public BluetoothGattCharacteristic ch_write;
     public BluetoothGattCharacteristic ch_read;
 
+    private Thread timeoutcheck;
+    private int response_timeout =0;
+    private boolean gatt_is_connected = false;
+
+    private int test_run=1;
+    public static String Bytes2String(byte [] b) {
+        String s="";
+        for (byte i : b) {
+            s+=String.format("%02X ", i);
+        }
+        return s;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void send_card(){
+        if (mybluetoothGatt == null){
+            Log.e("BLE","Sendcard connect gatt ");
+            swnp_sequence_idx=0;
+            mybluetoothGatt = device.connectGatt(this,true, bluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
+        } else {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            Log.e("BLE","Delay 1st write ");
+            response_timeout=15;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("BLE","Sendcard start sequence number " + test_run++);
+                    swnp_sequence_idx=0;
+                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+                    //Do something after 100ms
+                }
+            }, 10);
+        }
+    }
+
     public View.OnClickListener bt_click = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.b_card:
-                    swnp_sequence_idx=0;
-                    Write_BLE(swnp_sequence[swnp_sequence_idx++]);
+                    send_card();
                     break;
             }
         }
     };
 
-
     public void Write_BLE(byte[] towrite){
-        ch_write.setValue(towrite);
-        ch_write.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-        mybluetoothGatt.writeCharacteristic(ch_write);
+        if (ch_write == null || mybluetoothGatt == null)
+            Log.e("BLE","NO GATT on write ");
+        else {
+            Log.e("BLE","TX " + Bytes2String(towrite));
+            ch_write.setValue(towrite);
+            ch_write.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+            mybluetoothGatt.writeCharacteristic(ch_write);
+            response_timeout = 5; //500ms timeout
+        }
     }
 
+    public void Gatt_disconnect(){
+        if (mybluetoothGatt == null)
+            return;
+        mybluetoothGatt.disconnect();
+    }
 
     private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                // successfully connected to the GATT Server
+                if (gatt_is_connected){
+                    // noticed multiple new connects.
+                    Log.e("BLE","GATT is already CONNECTED "+status);
+                    // waarschijnlijk 2e connect in config man
+                } else{
+                    Log.e("BLE","GATT CONNECT "+ status);
+                    response_timeout=500; //5 second timeout
+                    mybluetoothGatt.discoverServices();
+                    gatt_is_connected=true;
+                }
 //                broadcastUpdate(ACTION_GATT_CONNECTED);
-                // Attempts to discover services after successful connection.
-                mybluetoothGatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                mybluetoothGatt=null;
+                if (gatt_is_connected) {
+                    Log.e("BLE", "GATT DISCONNECT "+status);
+                    gatt_is_connected = false;
+                    mybluetoothGatt.close();
+                    mybluetoothGatt = null;
+                    send_card();
+                } else {
+                    Log.e("BLE", "GATT DISCONNECT AGAIN "+status );
+
+                }
+            } else {
+                Log.e("BLE", "GATT UNKNOWN STATE "+status);
             }
         }
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             final byte[] value = characteristic.getValue();
             if (characteristic == ch_read){
-                Log.e("CHAR234","onCharacteristicChanged TBS2" + characteristic.getUuid());
+                Log.e("BLE","RX " + Bytes2String(value));
                 if (swnp_sequence[swnp_sequence_idx] == null){
                     mybluetoothGatt.disconnect();
                 } else {
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                 }
-//                BLERXQueu.add(value);
-//                TBS2_received((value));
             }
         }
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onServicesDiscovered(@NotNull final BluetoothGatt gatt, final int status) {
             final List<BluetoothGattService> services = gatt.getServices();
             for ( BluetoothGattService service : services){
-                Log.e("CHAR234 #","service " + service.getUuid().toString());
+//                Log.e("CHAR234 #","service " + service.getUuid().toString());
                 for (BluetoothGattCharacteristic ristic : service.getCharacteristics()){
                     String uid = ristic.getUuid().toString();
-                    Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
+//                    Log.e("CHAR234","BluetoothGattCharacteristic " + uid);
                     if (uid.contains(FromTBS)){
-                        Log.e("CHAR234","char read " + uid);
+                        Log.e("BLE","read channel " + uid);
                         ch_read=ristic;
                         UUID uid2=ch_read.getUuid();
                         gatt.setCharacteristicNotification(ch_read,true);
@@ -179,10 +246,13 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
 
                     }
                     if (uid.contains(ToTBS)){
-                        Log.e("CHAR234","char write " + uid);
+                        Log.e("BLE","write channel " + uid);
                         ch_write=ristic;
                     }
                 }
+            }
+            if (swnp_sequence_idx == 0) { //sendcard was called in disconnected state
+                send_card();
             }
         }
     };
@@ -192,7 +262,28 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_device);
-
+        response_timeout=100;
+        timeoutcheck = new Thread() {
+            @Override
+            public void run() {
+                // expect response after response_timeout else something went wrong
+                try {
+                    while(true) {
+                        Thread.sleep(100);
+                        response_timeout--;
+//                        Log.e(TAG, "          timeout " + response_timeout);
+                        if ((mybluetoothGatt != null) && ( response_timeout==0)) { // connected
+                            Log.e(TAG, "TIMEOUT no response " + test_run + "@ SEQ " +swnp_sequence_idx);
+                            mybluetoothGatt.disconnect();
+                        }
+                        if (response_timeout < 0) response_timeout=-1;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        timeoutcheck.start();
 
         permissionChecker = new RuntimePermissionChecker(this, savedInstanceState);
         permissionChecker.registerPermissionRequestCallback(REQUEST_STORAGE_PERMISSION, new RuntimePermissionChecker.PermissionRequestCallback() {
@@ -249,10 +340,11 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+        timeoutcheck.interrupt();
         EventBus.getDefault().unregister(this);
         if (manager != null)
             manager.disconnect();
-        super.onDestroy();
+        super.onDestroy(); // waarom hier?
     }
 
     @Override
