@@ -142,7 +142,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                     //Do something after 100ms
                 }
-            }, 500);
+            }, 250);
         }
     }
 
@@ -183,6 +183,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                 if (gatt_is_connected){
                     // noticed multiple new connects.
                     Log.e("BLE","GATT is already CONNECTED "+status);
+                    // waarschijnlijk 2e connect in config man
                 } else{
                     Log.e("BLE","GATT CONNECT "+ status);
                     response_timeout=500; //5 second timeout
@@ -194,6 +195,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                 if (gatt_is_connected) {
                     Log.e("BLE", "GATT DISCONNECT "+status);
                     gatt_is_connected = false;
+                    mybluetoothGatt.close();
                     mybluetoothGatt = null;
                     send_card();
                 } else {

@@ -152,11 +152,11 @@ public class ConfigurationManager {
             return;
         state = CONNECTING;
         EventBus.getDefault().post(new Connection(this));
-        if (Build.VERSION.SDK_INT < 23) {
-            gatt = device.connectGatt(context, false, gattCallback);
-        } else {
-            gatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE);
-        }
+//        if (Build.VERSION.SDK_INT < 23) {
+//            gatt = device.connectGatt(context, false, gattCallback);
+//        } else {
+//            gatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE);
+//        }
     }
 
     synchronized public void disconnect() {
