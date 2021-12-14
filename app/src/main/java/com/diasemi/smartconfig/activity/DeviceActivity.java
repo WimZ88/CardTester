@@ -142,7 +142,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                     //Do something after 100ms
                 }
-            }, 10);
+            }, 100);
         }
     }
 
@@ -341,6 +341,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         timeoutcheck.interrupt();
+        mybluetoothGatt.close(); // it just keeps running after kill app.
         EventBus.getDefault().unregister(this);
         if (manager != null)
             manager.disconnect();
