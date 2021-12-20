@@ -115,6 +115,8 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     private boolean gatt_is_connected = false;
 
     private int test_run=1;
+
+
     public static String Bytes2String(byte [] b) {
         String s="";
         for (byte i : b) {

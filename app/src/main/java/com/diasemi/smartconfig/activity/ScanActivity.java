@@ -306,13 +306,13 @@ public class ScanActivity extends AppCompatActivity implements OnItemClickListen
             public void run() {
                 AdvData advData = parseAdvertisingData(scanRecord);
                 String description = getDeviceDescription(advData);
-                if (bluetoothDeviceList.contains(device)) {
+                if (bluetoothDeviceList.contains(device)) { // update
                     int index = bluetoothDeviceList.indexOf(device);
                     deviceList.set(index, new ScanItem(getDeviceIcon(advData), device.getName(), device.getAddress(), description, rssi));
                     advDataList.set(index, advData);
                     updateList(false);
                 } else {
-                    bluetoothDeviceList.add(device);
+                    bluetoothDeviceList.add(device); // add
                     deviceList.add(new ScanItem(getDeviceIcon(advData), device.getName(), device.getAddress(), description, rssi));
                     advDataList.add(advData);
                     updateList(true);
@@ -483,8 +483,15 @@ public class ScanActivity extends AppCompatActivity implements OnItemClickListen
             if (add && scanFilter.advData != null)
                 add = scanFilter.advData.matcher(ConfigUtil.hex(advData.raw)).matches();
 
-            if (scanItem.signal < scanFilter.rssi && add && index == -1)
+            if (scanItem.signal < scanFilter.rssi && add && index == -1) {
                 continue;
+            }
+
+            if (scanItem.signal < scanFilter.rssi && index != -1) {
+                filterBluetoothDeviceList.remove(device);
+                filterDeviceList.remove(index);
+                continue;
+            }
 
             if (add) {
                 if (index == -1) {
@@ -559,12 +566,12 @@ public class ScanActivity extends AppCompatActivity implements OnItemClickListen
                 deviceListSwipeRefresh.setRefreshing(false);
             }
         });
-        scanTimer = new Runnable() {
-            @Override
-            public void run() {
-                stopDeviceScan();
-            }
-        };
+//        scanTimer = new Runnable() {
+//            @Override
+//            public void run() {
+//                stopDeviceScan();
+//            }
+//        };
         initScanFilter();
 
         // Initialize Bluetooth adapter
@@ -677,7 +684,7 @@ public class ScanActivity extends AppCompatActivity implements OnItemClickListen
         bluetoothScanAdapter.clear();
         bluetoothScanAdapter.notifyDataSetChanged();
         scannerApi.startScanning();
-        handler.postDelayed(scanTimer, 10000);
+//        handler.postDelayed(scanTimer, 10000);
         invalidateOptionsMenu();
     }
 
@@ -686,7 +693,7 @@ public class ScanActivity extends AppCompatActivity implements OnItemClickListen
         if (isScanning) {
             Log.d(TAG, "Stop scanning");
             isScanning = false;
-            handler.removeCallbacks(scanTimer);
+//            handler.removeCallbacks(scanTimer);
             scannerApi.stopScanning();
             invalidateOptionsMenu();
         }
