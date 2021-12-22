@@ -115,6 +115,8 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     private boolean gatt_is_connected = false;
 
     private int test_run=1;
+
+
     public static String Bytes2String(byte [] b) {
         String s="";
         for (byte i : b) {
@@ -142,7 +144,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     Write_BLE(swnp_sequence[swnp_sequence_idx++]);
                     //Do something after 100ms
                 }
-            }, 10);
+            }, 100);
         }
     }
 
@@ -341,6 +343,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         timeoutcheck.interrupt();
+        mybluetoothGatt.close(); // it just keeps running after kill app.
         EventBus.getDefault().unregister(this);
         if (manager != null)
             manager.disconnect();

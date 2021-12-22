@@ -18,12 +18,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="center"
         android:background="#EFEFEF"
+        android:gravity="center"
+        android:padding="16dp"
         android:text="@string/text_start_hint"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textIsSelectable="false"/>
+        android:textIsSelectable="false"
+        android:visibility="gone" />
 
     <View android:layout_width="match_parent"
         android:layout_height="1dp"
