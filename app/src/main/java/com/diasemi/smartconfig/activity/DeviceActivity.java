@@ -201,7 +201,7 @@ public class DeviceActivity extends AppCompatActivity implements ConfigurationMa
                     mybluetoothGatt = null;
                     send_card();
                 } else {
-                    Log.e("BLE", "GATT DISCONNECT AGAIN "+status );
+                    Log.e("BLE", "GATT DISCONNECT AGAIN  "+status );
 
                 }
             } else {
