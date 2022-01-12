@@ -668,7 +668,9 @@ public class ScanActivity extends AppCompatActivity implements OnItemClickListen
             startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT);
             return;
         }
-        if (!permissionChecker.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, R.string.location_permission_rationale, REQUEST_LOCATION_PERMISSION))
+//        if (!permissionChecker.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, R.string.location_permission_rationale, REQUEST_LOCATION_PERMISSION))
+//            return;
+        if (!permissionChecker.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, R.string.location_permission_rationale, REQUEST_LOCATION_PERMISSION))
             return;
         if (!checkLocationServices())
             return;
